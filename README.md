@@ -83,4 +83,4 @@ This repository was created to:
 
 
 ## Acknowledgement
-During this project, I took learnings from the tutorial provided by [eddywm.com](eddywm.com)
+During this project, I took learnings from the tutorial provided by [eddywm.com](https://www.eddywm.com/)
