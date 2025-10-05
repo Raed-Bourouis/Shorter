@@ -19,8 +19,11 @@ var (
 
 const cacheDuration = 6 * time.Hour
 
-func initStore() *StorageService {
-	redisClient := redis.NewClient(&redis.Options{Addr: "localhost:5000", Password: "", DB: 0})
+func InitStore() *StorageService {
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:5000",
+		Password: "",
+		DB:       0})
 	resp, err := redisClient.Ping(ctx).Result()
 	if err != nil {
 		panic(fmt.Sprintf("Redis Client Error : %v", err))
@@ -29,4 +32,19 @@ func initStore() *StorageService {
 	storeService.redisClient = redisClient
 
 	return storeService
+}
+
+func SaveURLMapping(shortURL, longURL, userID string) {
+	err := storeService.redisClient.Set(ctx, shortURL, longURL, cacheDuration).Err()
+	if err != nil {
+		panic(fmt.Sprintf("Could not set Long URL << %s >> as Short URL << %s >>.\n ERROR : %v\n", longURL, shortURL, err))
+	}
+}
+
+func GetLongURL(shortURL string) (longURL string) {
+	longURL, err := storeService.redisClient.Get(ctx, shortURL).Result()
+	if err != nil {
+		panic(fmt.Sprintf("Could not retrieve Long URL from Short URL << %s >>.\n ERROR : %v\n", shortURL, err))
+	}
+	return
 }
